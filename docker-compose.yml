@@ -1,0 +1,46 @@
+version: "3.8"
+services:
+  api:
+    platform: linux/amd64
+    build:
+      context: ./packages/api
+    container_name: api.backlog.test
+    environment:
+      ENV: ${ENV:-develop}
+      GIT_TAG: $GIT_TAG
+      GIT_REVISION: $GIT_REVISION
+    volumes:
+      - ./packages/api:/packages/api
+      - ./packages/schema:/packages/schema
+    ports:
+      - "3000:3000"
+  postgresql:
+    image: postgres:14.1-alpine
+    container_name: postgres.backlog.test
+    command: postgres -c max_connections=200
+    environment:
+      ENV: ${ENV:-develop}
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "password"
+    volumes:
+      - ./util-containers/postgresql/data:/var/lib/postgresql/data
+      - ./util-containers/postgresql/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    restart: always
+  # -----------------------------------------
+  # Util containers
+  # -----------------------------------------
+
+  # Migration service to relevant datastores.
+  migrate:
+    platform: linux/amd64
+    build:
+      context: ./packages/migrate
+    container_name: migrate.backlog.test
+    environment:
+      ENV: ${ENV:-develop}
+      GIT_TAG: $GIT_TAG
+      GIT_REVISION: $GIT_REVISION
+    volumes:
+      - ./packages/migrate:/packages/migrate
