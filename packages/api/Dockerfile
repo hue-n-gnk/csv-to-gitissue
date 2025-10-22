@@ -1,5 +1,5 @@
 
-FROM golang:1.19
+FROM golang:1.24.9
 
 # Installing OS dependencies here.
 # Avoid using `apt` command outside this RUN block, will bloat image size.
