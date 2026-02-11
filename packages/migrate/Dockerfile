@@ -1,5 +1,5 @@
 
-FROM golang:1.17.0-alpine
+FROM golang:1.26rc3-alpine
 
 # Install system dependencies
 RUN echo "Installing system dependencies.." && \
